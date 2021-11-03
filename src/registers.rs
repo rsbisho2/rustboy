@@ -24,7 +24,7 @@ impl Registers {
         // https://gbdev.gg8.se/wiki/articles/Gameboy_Bootstrap_ROM#Contents_of_the_ROM
         Registers {
             a: 0x01,
-            f: 0xB0,
+            f: 0x80,
             b: 0x00,
             c: 0x13,
             d: 0x00,
@@ -84,5 +84,32 @@ impl Registers {
             self.a, self.f, self.b, self.c, self.d, self.e, self.h, self.l, self.sp, self.pc);
         print!("Z N H C\n{} {} {} {}\n\n", 
             self.get_flag(Flag::Z) as u8, self.get_flag(Flag::N) as u8, self.get_flag(Flag::H) as u8, self.get_flag(Flag::C) as u8);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]	fn test_registers()
+    {
+        let mut reg = Registers::new();
+
+        reg.b = 0x34;
+        reg.c = 0x45;
+        reg.d = 0x56;
+        reg.e = 0x67;
+        reg.h = 0x78;
+        reg.l = 0x89;
+        assert_eq!(reg.bc(), 0x3445);
+        assert_eq!(reg.de(), 0x5667);
+        assert_eq!(reg.hl(), 0x7889);
+
+        reg.set_bc(0x1111);
+        reg.set_de(0x1111);
+        reg.set_hl(0x1111);
+        assert_eq!(reg.bc(), 0x1111);
+        assert_eq!(reg.de(), 0x1111);
+        assert_eq!(reg.hl(), 0x1111);
     }
 }

@@ -90,3 +90,54 @@ pub fn alu_add_hl(reg: &mut Registers, n: u16) {
     reg.set_flag(Flag::C, ((reg.hl() as u32) + (n as u32)) > 0xFFFF);
     reg.set_hl(r);
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_alu_cp() {
+        let mut reg = Registers::new();
+        reg.a =		0b11010010;
+        let n: u8 =	0b00101001;
+        alu_cp(&mut reg, n);
+		assert!(!reg.get_flag(Flag::Z));
+		assert!(reg.get_flag(Flag::N));
+		assert!(reg.get_flag(Flag::H));
+		assert!(!reg.get_flag(Flag::C));
+    }
+
+	#[test]
+	fn test_alu_cp_2() {
+		let mut reg = Registers::new();
+		reg.a =		0b01011001;
+        let n: u8 =	0b10000100;
+        alu_cp(&mut reg, n);
+		assert!(!reg.get_flag(Flag::Z));
+		assert!(reg.get_flag(Flag::N));
+		assert!(!reg.get_flag(Flag::H));
+		assert!(reg.get_flag(Flag::C));
+	}
+
+	#[test]
+	fn test_alu_add_hl() {
+		let mut reg = Registers::new();
+        reg.set_hl(0x0FFF);
+        let n =	0x0FFE;
+		alu_add_hl(&mut reg, n);
+		assert!(!reg.get_flag(Flag::N));
+		assert!(reg.get_flag(Flag::H));
+		assert!(!reg.get_flag(Flag::C));
+	}
+
+	#[test]
+	fn test_alu_add_hl_2() {
+		let mut reg = Registers::new();
+        reg.set_hl(0xF000);
+        let n =	0xFFFF;
+		alu_add_hl(&mut reg, n);
+		assert!(!reg.get_flag(Flag::N));
+		assert!(!reg.get_flag(Flag::H));
+		assert!(reg.get_flag(Flag::C));
+	}
+}

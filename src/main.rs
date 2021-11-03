@@ -14,8 +14,8 @@ fn main() {
     println!("Hello, rustboy!");
 
     let mut reg = Registers::new();
-    let mut mem: [u8; 0xFFFF + 1] = [0; 0xFFFF + 1];
-
+    let mut mem: Memory = [0; 0xFFFF + 1];
+    
     // Open the path in read-only mode
     let path = Path::new("tetris.gb");
     let display = path.display();
@@ -23,7 +23,7 @@ fn main() {
         Err(why) => panic!("couldn't open {}: {}", display, why),
         Ok(file) => file,
     };
-
+    
     // Copy rom data to memory
     match file.read(&mut mem) {
         Err(why) => panic!("couldn't read {}: {}", display, why),
@@ -47,6 +47,11 @@ fn main() {
         println!("Call count: {}", count);
         println!("Last opcode: {:#04x}", opcode);
         reg.print();
+
+        // Wait for key press
+        println!("Press any key to continue...");
+        let mut input = String::new();
+        std::io::stdin().read_line(&mut input).expect("Failed to read line");
     }
 }
 
@@ -380,6 +385,3 @@ fn call_instruction(opcode: u8, reg: &mut Registers, mem: &mut [u8]) -> u32 {
         }
     }
 }
-
-#[cfg(test)]
-mod test;

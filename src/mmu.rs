@@ -1,3 +1,5 @@
+pub type Memory = [u8; 0xFFFF + 1];
+
 // Read byte from memory
 pub fn read_byte(adr: u16, mem: &[u8]) -> u8 {
     print_debug("Read byte", adr);
@@ -44,4 +46,18 @@ fn print_debug(label: &str, adr: u16) {
             0xFFFF => "IE"
         }
     );
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_write_byte() {
+        let mut mem: [u8; 0xFFFF] = [0; 0xFFFF];
+        let adr = 0xFFFE;
+        let val = 0xFF;
+        write_byte(adr, val, &mut mem);
+        assert_eq!(val, read_byte(adr, &mut mem));
+    }
 }
