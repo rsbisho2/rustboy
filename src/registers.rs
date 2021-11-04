@@ -11,6 +11,7 @@ pub struct Registers {
     pub pc: u16
 }
 
+#[derive(Clone, Copy)]
 pub enum Flag {
     Z = 0b10000000,
     N = 0b01000000,
@@ -91,7 +92,8 @@ impl Registers {
 mod tests {
     use super::*;
 
-    #[test]	fn test_registers()
+    #[test]	
+    fn test_registers()
     {
         let mut reg = Registers::new();
 
@@ -111,5 +113,18 @@ mod tests {
         assert_eq!(reg.bc(), 0x1111);
         assert_eq!(reg.de(), 0x1111);
         assert_eq!(reg.hl(), 0x1111);
+    }
+
+    #[test]
+    fn test_flags()
+    {
+        let mut reg = Registers::new();
+
+        for flag in [Flag::Z, Flag::N, Flag::H, Flag::C].iter() {
+            reg.set_flag(*flag, true);
+            assert_eq!(reg.get_flag(*flag), true);
+            reg.set_flag(*flag, false);
+            assert_eq!(reg.get_flag(*flag), false);
+        }
     }
 }
