@@ -54,7 +54,7 @@ mod tests {
 
     #[test]
     fn test_write_byte() {
-        let mut mem: [u8; 0xFFFF] = [0; 0xFFFF];
+        let mut mem: Memory = [0; 0xFFFF + 1];
         let adr = 0xFFFE;
         let val = 0xFF;
         write_byte(adr, val, &mut mem);

@@ -12,7 +12,7 @@ impl SignedAdd for u16 {
     }
 }
 
-    // Get next byte from memory and increment program counter
+// Get next byte from memory and increment program counter
 pub fn next_byte(reg: &mut Registers, mem: &mut [u8]) -> u8 {
     let byte = read_byte(reg.pc, mem);
     reg.pc += 1;
