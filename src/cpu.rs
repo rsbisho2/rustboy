@@ -95,9 +95,9 @@ pub fn call_instruction(opcode: u8, reg: &mut Registers, mem: &mut [u8]) -> u32 
             2
         },
 
-        // DEC D
+        // DEC C
         0x0D => {
-            reg.d = alu_dec(reg, reg.d);
+            reg.c = alu_dec(reg, reg.c);
             1
         },
 
@@ -181,7 +181,6 @@ pub fn call_instruction(opcode: u8, reg: &mut Registers, mem: &mut [u8]) -> u32 
         0x20 => {
             if !reg.get_flag(Flag::Z) {
                 let n = next_byte(reg, mem) as i8;
-                println!("r8: {}", n);
                 reg.pc = reg.pc.signed_add(n);
                 return 3;
             } else {
@@ -240,6 +239,12 @@ pub fn call_instruction(opcode: u8, reg: &mut Registers, mem: &mut [u8]) -> u32 
                 let n = next_byte(reg, mem) as i8;
                 reg.pc = ((reg.pc as i32) + (n as i32)) as u16;
             }
+            2
+        },
+
+        // LD A, d8
+        0x3E => {
+            reg.a = next_byte(reg, mem);
             2
         },
 
@@ -338,6 +343,33 @@ pub fn call_instruction(opcode: u8, reg: &mut Registers, mem: &mut [u8]) -> u32 
                 return 4
             }
             3
+        },
+
+        // LDH (a8), A
+        0xE0 => {
+            let adr = next_byte(reg, mem) as u16;
+            write_byte(0xFF00 + adr, reg.a, mem);
+            3
+        },
+
+        // LDH A, (a8)
+        0xF0 => {
+            let adr = next_byte(reg, mem) as u16;
+            reg.a = read_byte(0xFF00 + adr, mem);
+            3
+        },
+
+        // DI
+        0xF3 => {
+            // TODO: Interupts are not implemented
+            1
+        },
+
+        // CP d8
+        0xFE => {
+            let n = next_byte(reg, mem);
+            alu_cp(reg, n);
+            2
         },
 
         // Instruction not implemented
